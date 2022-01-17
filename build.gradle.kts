@@ -11,8 +11,8 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
 }
 
-group = "template"
-version = "1.0-SNAPSHOT"
+group = "woodybot"
+version = "0.0.3"
 
 repositories {
     // You can remove this if you're not testing locally-installed KordEx builds
@@ -40,7 +40,7 @@ dependencies {
 
 application {
     // This is deprecated, but the Shadow plugin requires it
-    mainClassName = "template.AppKt"
+    mainClassName = "woodybot.AppKt"
 }
 
 gitHooks {
@@ -59,7 +59,7 @@ tasks.withType<KotlinCompile> {
 tasks.jar {
     manifest {
         attributes(
-            "Main-Class" to "template.AppKt"
+            "Main-Class" to "woodybot.AppKt"
         )
     }
 }

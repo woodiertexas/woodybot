@@ -5,6 +5,8 @@ import com.kotlindiscord.kord.extensions.DISCORD_BLURPLE
 import com.kotlindiscord.kord.extensions.DISCORD_FUCHSIA
 import com.kotlindiscord.kord.extensions.DISCORD_GREEN
 import com.kotlindiscord.kord.extensions.commands.Arguments
+import com.kotlindiscord.kord.extensions.commands.application.slash.converters.impl.defaultingStringChoice
+import com.kotlindiscord.kord.extensions.commands.application.slash.converters.impl.stringChoice
 import com.kotlindiscord.kord.extensions.commands.converters.impl.coalescedString
 import com.kotlindiscord.kord.extensions.commands.converters.impl.defaultingCoalescingString
 import com.kotlindiscord.kord.extensions.commands.converters.impl.defaultingString
@@ -35,33 +37,36 @@ class SuggestExtension : Extension() {
                 val kord = this@SuggestExtension.kord
                 val suggestionChannel = kord.getChannelOf<TextChannel>(Snowflake(914991174790574150))
 
-                var embedTitle = ""
-                var embedColor = DISCORD_BLACK
-                if (arguments.type == "server") {
-                    embedTitle = "Server suggestion from ${arguments.name}"
-                    embedColor = DISCORD_BLURPLE
-                } else if (arguments.type == "bot") {
-                    embedTitle = "Bot suggestion from ${arguments.name}"
-                    embedColor = DISCORD_FUCHSIA
-                } else if (arguments.type == "mc") {
-                    embedTitle = "Minecraft suggestion from ${arguments.name}"
-                    embedColor = DISCORD_GREEN
-                }
+                if (arguments.suggestion == "") {
+                    channel.createMessage("Whoops you need to include a suggestion. Command syntax is `?suggest <name> <yourSuggestion>`.")
+                } else {
+                    channel.createMessage("Your suggestion has been posted to <#914991174790574150>, ${message.author?.mention}")
 
-                val eee = suggestionChannel?.createMessage {
-                    embed {
-                        title = embedTitle
-                        color = embedColor
-                        description = arguments.suggestion
+                    val eee = suggestionChannel?.createMessage {
+                        embed {
+                            when(arguments.type) {
+                                "server" -> title = "Server suggestion from ${arguments.name}"
+                                "bot" -> title = "Bot suggestion from ${arguments.name}"
+                                "mc" -> title = "Minecraft suggestion from ${arguments.name}"
+                            }
 
-                        footer {
-                            text = message.author?.id.toString()
+                            when(arguments.type) {
+                                "server" -> color = DISCORD_BLURPLE
+                                "bot" -> color = DISCORD_FUCHSIA
+                                "mc" -> color = DISCORD_GREEN
+                            }
+
+                            description = arguments.suggestion
+
+                            footer {
+                                text = message.author?.id.toString()
+                            }
                         }
+                        return@createMessage
                     }
-                    return@createMessage
+                    eee?.addReaction(":yes:914991294227566672")
+                    eee?.addReaction(":no:914991294219173888")
                 }
-                eee?.addReaction(":yes:914991294227566672")
-                eee?.addReaction(":no:914991294219173888")
             }
         }
 
@@ -74,23 +79,20 @@ class SuggestExtension : Extension() {
                 val kord = this@SuggestExtension.kord
                 val suggestionChannel = kord.getChannelOf<TextChannel>(Snowflake(914991174790574150))
 
-                var embedTitle = ""
-                var embedColor = DISCORD_BLACK
-                if (arguments.type == "server") {
-                    embedTitle = "Server suggestion from ${arguments.name}"
-                    embedColor = DISCORD_BLURPLE
-                } else if (arguments.type == "bot") {
-                    embedTitle = "Bot suggestion from ${arguments.name}"
-                    embedColor = DISCORD_FUCHSIA
-                } else if (arguments.type == "mc") {
-                    embedTitle = "Minecraft suggestion from ${arguments.name}"
-                    embedColor = DISCORD_GREEN
-                }
-
                 val eee = suggestionChannel?.createMessage {
                     embed {
-                        title = embedTitle
-                        color = embedColor
+                        when(arguments.type) {
+                            "server" -> title = "Server suggestion from ${arguments.name}"
+                            "bot" -> title = "Bot suggestion from ${arguments.name}"
+                            "mc" -> title = "Minecraft suggestion from ${arguments.name}"
+                        }
+
+                        when(arguments.type) {
+                            "server" -> color = DISCORD_BLURPLE
+                            "bot" -> color = DISCORD_FUCHSIA
+                            "mc" -> color = DISCORD_GREEN
+                        }
+
                         description = arguments.suggestion
 
                         footer {
@@ -106,19 +108,22 @@ class SuggestExtension : Extension() {
     }
 
     inner class SuggestArgs : Arguments() {
-        val name: String by coalescedString(
+        val name: String by defaultingString(
             displayName = "name",
             description = "This could be your current username or if you're a part of a plural system; your headmate(s) name(s).\n",
+            defaultValue = ""
         )
 
-        val type: String by coalescedString(
+        val type: String by defaultingString(
             displayName = "type",
             description = "The suggestion type can be any of the following: `server` for a Discord server suggestion, `bot` for a bot suggestion, and `mc` for a Minecraft related suggestion.\n",
+            defaultValue = ""
         )
 
-        val suggestion: String by coalescedString(
+        val suggestion: String by defaultingCoalescingString(
             displayName = "suggestion",
-            description = "This is where you write your suggestion."
+            description = "This is where you write your suggestion.",
+            defaultValue = ""
         )
     }
 
@@ -128,9 +133,10 @@ class SuggestExtension : Extension() {
             description = "Input current username or if you're plural; your headmate's name.",
         )
 
-        val type: String by coalescedString(
+        val type: String by stringChoice(
             displayName = "type",
             description = "\"server\": Discord server suggestion, \"bot\": bot suggestion, \"mc\": MC related suggestion.",
+            choices = mapOf("Discord server suggestion" to "server", "Discord bot suggestion" to "bot", "Minecraft suggestion" to "mc")
         )
 
         val suggestion: String by coalescedString(
