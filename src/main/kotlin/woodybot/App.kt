@@ -8,6 +8,7 @@ import com.kotlindiscord.kord.extensions.utils.env
 import dev.kord.common.entity.Snowflake
 import woodybot.extensions.FunExtension
 import woodybot.extensions.SuggestExtension
+import woodybot.extensions.UtilsExtension
 
 val TEST_SERVER_ID = Snowflake(
     env("TEST_SERVER").toLong()  // Get the test server ID from the env vars or a .env file
@@ -36,6 +37,7 @@ suspend fun main() {
         extensions {
             add(::SuggestExtension)
             add(::FunExtension)
+            add(::UtilsExtension)
         }
     }
 

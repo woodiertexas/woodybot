@@ -12,11 +12,10 @@ plugins {
 }
 
 group = "woodybot"
-version = "0.0.3"
+version = "0.0.4"
 
 repositories {
-    // You can remove this if you're not testing locally-installed KordEx builds
-    mavenLocal()
+    mavenCentral()
 
     maven {
         name = "Kotlin Discord"
@@ -36,6 +35,10 @@ dependencies {
     implementation(libs.jansi)
     implementation(libs.logback)
     implementation(libs.logging)
+
+    implementation("org.jetbrains.kotlinx:multik-api:0.1.1")
+    implementation("org.jetbrains.kotlinx:multik-default:0.1.1")
+
 }
 
 application {

@@ -1,17 +1,15 @@
 package woodybot.extensions
 
 import com.kotlindiscord.kord.extensions.DISCORD_FUCHSIA
-import com.kotlindiscord.kord.extensions.DISCORD_RED
 import com.kotlindiscord.kord.extensions.commands.Arguments
 import com.kotlindiscord.kord.extensions.commands.converters.impl.defaultingCoalescingString
 import com.kotlindiscord.kord.extensions.commands.converters.impl.user
 import com.kotlindiscord.kord.extensions.extensions.Extension
 import com.kotlindiscord.kord.extensions.extensions.chatCommand
-import com.kotlindiscord.kord.extensions.extensions.event
 import com.kotlindiscord.kord.extensions.utils.respond
-import dev.kord.rest.builder.message.create.embed
-import dev.kord.core.behavior.channel.createMessage
 import dev.kord.common.annotation.KordPreview
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.rest.builder.message.create.embed
 
 @OptIn(KordPreview::class)
 class FunExtension : Extension() {
@@ -150,6 +148,39 @@ class FunExtension : Extension() {
                 }
             }
         }
+
+        /*chatCommand(::BattleShipArgs) {
+            name = "battleship"
+            description = "Play battleship with the bot."
+
+            check { failIf(event.message.author == null) }
+
+            action {
+                fun CreateBattleShipBoard(): Array<Array<Char>> {
+                    var battleShipBoard = arrayOf<Array<Char>>()
+
+                    for (i in 0..3) {
+                        var array = arrayOf<Char>()
+                        for (j in 0..3) {
+                            if (Random.nextInt(0, 1) == 0) {
+                                battleShipBoard[i][j] = 'o'
+                            } else if (Random.nextInt(0, 1) == 1) {
+                                battleShipBoard[i][j] = ' '
+                            }
+                        }
+                    }
+                    for (array in battleShipBoard) {
+                        for (value in array) {
+                            print("${value} ")
+                        }
+                        println()
+                    }
+                    return battleShipBoard
+                }
+
+                channel.createMessage(CreateBattleShipBoard().toString())
+            }
+        }*/
     }
 
     inner class BamArgs: Arguments() {
@@ -168,6 +199,10 @@ class FunExtension : Extension() {
     inner class SadTromboneArgs: Arguments() {
         val target by user(displayName = "target", description = "Person you want to give a sad trombone to.")
     }
+
+    /*inner class BattleShipArgs: Arguments() {
+        //
+    }*/
 
     inner class EightBallArgs: Arguments() {
         val question: String by defaultingCoalescingString(
